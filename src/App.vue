@@ -13,7 +13,6 @@ function uploadFile(event) {
     complete(res) {
       if (res.errors[0]) toast.error(res.errors[0].message);
       data.value = res.data;
-      console.log(data.value);
     },
   });
 }
@@ -97,8 +96,7 @@ function downloadFile() {
                 :key="i"
                 class="px-4 py-3 border-r-2"
               >
-                <input class="pl-1 w-auto" v-model="data[index][i]" />
-                <!-- {{ elem }} -->
+                <input class="pl-1 w-full" v-model="data[index][i]" />
               </td>
             </template>
           </tr>
