@@ -6,13 +6,26 @@ import { useToast } from "vue-toastification";
 const data = ref([]);
 const toast = useToast();
 
+function deleteColumn(index) {
+  data.value = data.value.filter((elem, i) => i != index);
+}
+
+function input(event, index, i) {
+  data.value[index][i] = event.target.value;
+  if (index === data.value.length - 1) {
+    data.value.push(data.value[0].map((elem) => ""));
+  }
+}
+
 function uploadFile(event) {
   const file = event.target.files[0];
   Papa.parse(file, {
     skipEmptyLines: true,
     complete(res) {
+      console.log(res);
       if (res.errors[0]) toast.error(res.errors[0].message);
       data.value = res.data;
+      data.value.push(data.value[0].map((elem) => ""));
     },
   });
 }
@@ -81,6 +94,7 @@ function downloadFile() {
             >
               {{ header }}
             </th>
+            <th v-if="data.length" class="border-2 px-4 py-3"></th>
           </tr>
         </thead>
         <tbody>
@@ -96,7 +110,19 @@ function downloadFile() {
                 :key="i"
                 class="px-4 py-3 border-r-2"
               >
-                <input class="pl-1 w-full" v-model="data[index][i]" />
+                <input
+                  class="pl-1 w-full"
+                  :value="data[index][i]"
+                  @input="input($event, index, i)"
+                />
+              </td>
+              <td v-if="index != data.length - 1" class="border-r-2 px-4 py-3">
+                <a
+                  href="#"
+                  @click="deleteColumn(index)"
+                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  >Delete</a
+                >
               </td>
             </template>
           </tr>
