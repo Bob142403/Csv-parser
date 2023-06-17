@@ -160,7 +160,7 @@ function uploadFile(event) {
       <input
         id="dropzone-file"
         type="file"
-        @change="uploadFile"
+        @input="uploadFile"
         class="hidden"
       />
     </label>
