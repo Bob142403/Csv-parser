@@ -1,16 +1,33 @@
 <script setup>
-const props = defineProps({ table: Array });
+import Papa from "papaparse";
+
+const props = defineProps({
+  table: Array,
+});
+
+function downloadFile() {
+  const a = document.createElement("a");
+
+  const str = Papa.unparse(props.table);
+
+  const blob = new Blob([str], { type: "text/csv" });
+
+  const url = window.URL.createObjectURL(blob);
+
+  a.href = url;
+  a.download = "download.csv";
+
+  a.click();
+}
 </script>
 
 <template>
   <div
     id="extralarge-modal"
     tabindex="-1"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto  md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
   >
-    <div
-      class="relative w-full max-w-7xl max-h-full"
-    >
+    <div class="relative w-full max-w-7xl max-h-full">
       <!-- Modal content -->
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->
@@ -42,76 +59,17 @@ const props = defineProps({ table: Array });
           </button>
         </div>
         <!-- Modal body -->
-        <div class="p-6 space-y-6 h-[100]">
-          <div class="relative my-4 overflow-y-auto max-h-full">
-            <table
-              class="w-screen text-sm text-center text-gray-500 dark:text-gray-400"
-            >
-              <thead
-                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 fixed"
-              >
-                <tr>
-                  <th></th>
-                  <th
-                    scope="col"
-                    class="border-2 px-4 py-3"
-                    v-for="header in table[0]"
-                    :key="header"
-                  >
-                    {{ header }}
-                  </th>
-                  <th v-if="table.length" class="border-2 px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(row, index) in table"
-                  :key="index"
-                  class="bg-white border-2 dark:bg-gray-800 dark:border-gray-700"
-                >
-                  <template v-if="index != 0">
-                    <td class="border-r-2 px-1">{{ index }}</td>
-                    <td v-for="(elem, i) in row" :key="i" class="border-r-2">
-                      <input
-                        class="pl-1 w-full"
-                        :value="table[index][i]"
-                        @input="input($event, index, i)"
-                      />
-                    </td>
-                    <td
-                      v-if="index != table.length - 1"
-                      class="border-r-2 px-4 py-3"
-                    >
-                      <a
-                        href="#"
-                        @click="deleteColumn(index)"
-                        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                        >Delete</a
-                      >
-                    </td>
-                  </template>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <div class="p-6 space-y-6 h-[40rem]"><slot></slot></div>
         <!-- Modal footer -->
         <div
           class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600"
         >
           <button
-            data-modal-hide="extralarge-modal"
             type="button"
+            @click="downloadFile"
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            I accept
-          </button>
-          <button
-            data-modal-hide="extralarge-modal"
-            type="button"
-            class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-          >
-            Decline
+            Download
           </button>
         </div>
       </div>

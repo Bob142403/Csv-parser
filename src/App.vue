@@ -9,6 +9,12 @@ const data = ref([]);
 const toast = useToast();
 
 function deleteColumn(index) {
+  data.value = data.value.map((row, i) =>
+    row.filter((column, i) => i !== index)
+  );
+}
+
+function deleteRow(index) {
   data.value = data.value.filter((elem, i) => i != index);
 }
 
@@ -17,6 +23,9 @@ function input(event, index, i) {
   if (index === data.value.length - 1) {
     data.value.push(data.value[0].map((elem) => ""));
   }
+  if (i === data.value[index].length - 1) {
+    data.value = data.value.map((elem) => [...elem, ""]);
+  }
 }
 
 function uploadFile(event) {
@@ -24,35 +33,104 @@ function uploadFile(event) {
   Papa.parse(file, {
     skipEmptyLines: true,
     complete(res) {
-      console.log(res);
       if (res.errors[0]) toast.error(res.errors[0].message);
       else {
         data.value = res.data;
         data.value.push(data.value[0].map((elem) => ""));
+        data.value = data.value.map((elem) => [...elem, ""]);
         document.getElementById("open_modal").click();
       }
     },
   });
 }
-
-function downloadFile() {
-  const a = document.createElement("a");
-
-  const str = Papa.unparse(data.value);
-
-  const blob = new Blob([str], { type: "text/csv" });
-
-  const url = window.URL.createObjectURL(blob);
-
-  a.href = url;
-  a.download = "download.csv";
-
-  a.click();
-}
 </script>
 
 <template>
-  <Modal :table="data" />
+  <Modal :table="data">
+    <div class="relative overflow-y-auto max-h-full">
+      <table
+        class="min-w-max text-sm text-center text-gray-500 dark:text-gray-400"
+      >
+        <thead class="text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col"></th>
+            <th
+              scope="col"
+              v-for="(header, i) in data[0]"
+              :key="i"
+              class="border-2 py-1"
+            >
+              <div class="flex">
+                <input
+                  class="pl-1 text-center ml-auto"
+                  :value="data[0][i]"
+                  @input="input($event, 0, i)"
+                  :style="{ width: (data[0][i].length || 10) * 12 + 'px' }"
+                />
+                <svg
+                  v-if="i != data[0].length - 1"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                  @click="deleteColumn(i)"
+                  class="mr-auto w-5 h-5 cursor-pointer hover:text-black"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  ></path>
+                </svg>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="(row, index) in data"
+            :key="index"
+            class="bg-white border-2 dark:bg-gray-800 dark:border-gray-700"
+          >
+            <template v-if="index != 0">
+              <td class="border-r-2 px-1 w-20">
+                <div class="flex justify-around">
+                  {{ index }}
+                  <svg
+                    v-if="index != data.length - 1"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                    @click="deleteRow(index)"
+                    class="w-5 h-5 cursor-pointer hover:text-black"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                    ></path>
+                  </svg>
+                </div>
+              </td>
+              <td v-for="(elem, i) in row" :key="i" class="border-r-2 w-10">
+                <input
+                  class="pl-1 text-center"
+                  :value="data[index][i]"
+                  @input="input($event, index, i)"
+                  :style="{ width: (data[index][i].length || 10) * 12 + 'px' }"
+                />
+              </td>
+            </template>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </Modal>
   <div class="flex items-center justify-center h-screen">
     <label
       for="dropzone-file"
@@ -93,78 +171,4 @@ function downloadFile() {
     data-modal-target="extralarge-modal"
     data-modal-toggle="extralarge-modal"
   ></button>
-  <!-- <div class="px-2 pt-3 flex flex-col h-screen">
-    <div class="flex justify-between">
-      <button
-        type="button"
-        :disabled="!data.length"
-        @click="downloadFile"
-        class="ml-2 text-white bg-gray-800 hover:bg-gray-900 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        <svg
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.5"
-          viewBox="0 0 24 24"
-          class="w-5 h-5"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
-          ></path>
-        </svg>
-      </button>
-    </div>
-    <div class="relative overflow-x-auto my-4 overflow-y-auto h-screen">
-      <table
-        class="w-full text-sm text-center text-gray-500 dark:text-gray-400"
-      >
-        <thead
-          class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
-        >
-          <tr>
-            <th></th>
-            <th
-              scope="col"
-              class="border-2 px-4 py-3"
-              v-for="header in data[0]"
-              :key="header"
-            >
-              {{ header }}
-            </th>
-            <th v-if="data.length" class="border-2 px-4 py-3"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            v-for="(row, index) in data"
-            :key="index"
-            class="bg-white border-2 dark:bg-gray-800 dark:border-gray-700"
-          >
-            <template v-if="index != 0">
-              <td class="border-r-2 px-1">{{ index }}</td>
-              <td v-for="(elem, i) in row" :key="i" class="border-r-2">
-                <input
-                  class="pl-1 w-full"
-                  :value="data[index][i]"
-                  @input="input($event, index, i)"
-                />
-              </td>
-              <td v-if="index != data.length - 1" class="border-r-2 px-4 py-3">
-                <a
-                  href="#"
-                  @click="deleteColumn(index)"
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  >Delete</a
-                >
-              </td>
-            </template>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </template>
