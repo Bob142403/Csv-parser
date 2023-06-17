@@ -35,7 +35,7 @@ function downloadFile() {
           class="flex items-center justify-between p-5 border-b rounded-t dark:border-gray-600"
         >
           <h3 class="text-xl font-medium text-gray-900 dark:text-white">
-            Extra Large modal
+            Table
           </h3>
           <button
             type="button"
