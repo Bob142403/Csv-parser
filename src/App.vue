@@ -51,16 +51,13 @@ function uploadFile(event) {
       <table
         class="min-w-max text-sm text-center text-gray-500 dark:text-gray-400"
       >
-        <thead class="text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+        <thead
+          class="text-gray-700 bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+        >
           <tr>
-            <th scope="col"></th>
-            <th
-              scope="col"
-              v-for="(header, i) in data[0]"
-              :key="i"
-              class="border-2 py-1"
-            >
-              <div class="flex">
+            <th scope="col" class="left-0 border-2 z-10"></th>
+            <th scope="col" v-for="(header, i) in data[0]" :key="i" class="border-2">
+              <div class="flex border-2">
                 <input
                   class="pl-1 text-center ml-auto"
                   :value="data[0][i]"
@@ -95,8 +92,8 @@ function uploadFile(event) {
             class="bg-white border-2 dark:bg-gray-800 dark:border-gray-700"
           >
             <template v-if="index != 0">
-              <td class="border-r-2 px-1 w-20">
-                <div class="flex justify-around">
+              <th class="px-1 w-20 sticky left-0 bg-gray-50">
+                <div class="flex justify-around border-2">
                   {{ index }}
                   <svg
                     v-if="index != data.length - 1"
@@ -116,7 +113,7 @@ function uploadFile(event) {
                     ></path>
                   </svg>
                 </div>
-              </td>
+              </th>
               <td v-for="(elem, i) in row" :key="i" class="border-r-2 w-10">
                 <input
                   class="pl-1 text-center"
@@ -172,3 +169,11 @@ function uploadFile(event) {
     data-modal-toggle="extralarge-modal"
   ></button>
 </template>
+<style scoped>
+thead th {
+  position: sticky;
+  top: 0;
+  --tw-bg-opacity: 1;
+  background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
+</style>
