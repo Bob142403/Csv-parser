@@ -47,7 +47,7 @@ function uploadFile(event) {
 
 <template>
   <Modal :table="data">
-    <div class="relative overflow-y-auto max-h-full">
+    <div class="relative overflow-y-auto max-h-[45rem]">
       <table
         class="min-w-max text-sm text-center text-gray-500 dark:text-gray-400"
       >
