@@ -25,9 +25,9 @@ function downloadFile() {
   <div
     id="extralarge-modal"
     tabindex="-1"
-    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-8xl"
   >
-    <div class="relative w-full max-w-7xl max-h-full">
+    <div class="relative w-full max-w-full">
       <!-- Modal content -->
       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <!-- Modal header -->
@@ -59,7 +59,7 @@ function downloadFile() {
           </button>
         </div>
         <!-- Modal body -->
-        <div class="p-6 space-y-6 h-[40rem]"><slot></slot></div>
+        <div class="p-6 space-y-6 h-[40rem] max-h-[50rem]"><slot></slot></div>
         <!-- Modal footer -->
         <div
           class="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600"
