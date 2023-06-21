@@ -18,7 +18,7 @@ function deleteRow(index) {
   data.value = data.value.filter((elem, i) => i != index);
 }
 
-function input(event, index, i) {
+function inputData(event, index, i) {
   data.value[index][i] = event.target.value;
   if (index === data.value.length - 1) {
     data.value.push(data.value[0].map((elem) => ""));
@@ -47,7 +47,7 @@ function uploadFile(event) {
 
 <template>
   <Modal :table="data">
-    <div class="relative overflow-y-auto max-h-[45rem]">
+    <div class="relative overflow-y-auto max-h-[30rem]">
       <table
         class="min-w-max text-sm text-center text-gray-500 dark:text-gray-400"
       >
@@ -56,13 +56,18 @@ function uploadFile(event) {
         >
           <tr>
             <th scope="col" class="left-0 border-2 z-10"></th>
-            <th scope="col" v-for="(header, i) in data[0]" :key="i" class="border-2">
-              <div class="flex border-2">
+            <th
+              scope="col"
+              v-for="(header, i) in data[0]"
+              :key="i"
+              class="border-2"
+            >
+              <div class="flex border-2 mx-auto">
                 <input
                   class="pl-1 text-center ml-auto"
                   :value="data[0][i]"
-                  @input="input($event, 0, i)"
-                  :style="{ width: (data[0][i].length || 10) * 12 + 'px' }"
+                  @input="inputData($event, 0, i)"
+                  :style="{ width: (data[0][i].length || 4) * 12 + 'px' }"
                 />
                 <svg
                   v-if="i != data[0].length - 1"
@@ -114,12 +119,12 @@ function uploadFile(event) {
                   </svg>
                 </div>
               </th>
-              <td v-for="(elem, i) in row" :key="i" class="border-r-2 w-10">
+              <td v-for="(elem, i) in row" :key="i" class="border-r-2">
                 <input
                   class="pl-1 text-center"
                   :value="data[index][i]"
-                  @input="input($event, index, i)"
-                  :style="{ width: (data[index][i].length || 10) * 12 + 'px' }"
+                  @input="inputData($event, index, i)"
+                  :style="{ width: (data[index][i].length || 4) * 12 + 'px' }"
                 />
               </td>
             </template>
@@ -130,7 +135,7 @@ function uploadFile(event) {
   </Modal>
   <div class="flex items-center justify-center h-screen">
     <label
-      for="dropzone-file"
+      for="dropzone"
       class="mx-10 flex flex-col items-center justify-center w-96 h-96 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
     >
       <div class="flex flex-col items-center justify-center pt-5 pb-6">
@@ -154,12 +159,7 @@ function uploadFile(event) {
         </p>
         <p class="text-xs text-gray-500 dark:text-gray-400">Only CSV files</p>
       </div>
-      <input
-        id="dropzone-file"
-        type="file"
-        @input="uploadFile"
-        class="hidden"
-      />
+      <input id="dropzone" type="file" @input="uploadFile" class="hidden" />
     </label>
   </div>
   <button
